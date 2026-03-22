@@ -5,6 +5,8 @@ using Api.UseCases.Users.Interfaces;
 using Dal;
 using Logic;
 using Microsoft.OpenApi.Models;
+using Api.UseCases.Tasks;
+using Api.UseCases.Tasks.Interfaces;
 
 namespace Api;
 
@@ -75,6 +77,14 @@ public sealed class Startup
         // Transient
         services.AddTransient<TransientService1>();
         services.AddTransient<TransientService2>();
+
+        // Регистрация слоёв
+        services.AddDal();
+        services.AddLogic();
+
+        // Регистрация UseCase'ов
+        services.AddScoped<IManageUserUseCase, ManageUserUseCase>();
+        services.AddScoped<IManageTaskUseCase, ManageTaskUseCase>();
     }
 
     /// <summary>
