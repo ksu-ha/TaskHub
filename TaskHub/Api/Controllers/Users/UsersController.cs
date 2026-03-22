@@ -5,11 +5,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers.Users;
 
+using Api.Attributes;
+
 /// <summary>
 /// Контроллер работы с пользователями
 /// </summary>
 [ApiController]
 [Route("users")]
+[ResponseTimeHeader]
+[StudentInfoHeaders]
 public sealed class UsersController : ControllerBase
 {
     /// <summary>
@@ -29,6 +33,7 @@ public sealed class UsersController : ControllerBase
     /// <param name="cancellationToken">Токен отмены</param>
     /// <returns>Созданный пользователь</returns>
     [HttpPost]
+    [ValidateUserRequest]
     public async Task<ActionResult<UserResponse>> CreateUserAsync(
         [FromBody] CreateUserRequest? request,
         CancellationToken cancellationToken)
@@ -76,6 +81,7 @@ public sealed class UsersController : ControllerBase
     /// <param name="cancellationToken">Токен отмены</param>
     /// <returns>204 при успехе или 400 при неверном запросе</returns>
     [HttpPut("{id:guid}/name")]
+    [ValidateUserRequest]
     public async Task<IActionResult> SetUserNameAsync(
         [FromRoute] Guid id,
         [FromBody] SetUserNameRequest? request,
