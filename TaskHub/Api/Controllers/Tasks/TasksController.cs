@@ -2,6 +2,7 @@
 using Api.Controllers.Tasks.Response;
 using Api.UseCases.Tasks.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Api.Filters;
 
 namespace Api.Controllers.Tasks;
 
@@ -12,8 +13,8 @@ using Api.Attributes;
 /// </summary>
 [ApiController]
 [Route("tasks")]
-[ResponseTimeHeader]
-[StudentInfoHeaders]
+[TypeFilter(typeof(StudentInfoHeadersFilter))]
+[TypeFilter(typeof(RequestLoggingFilter))]
 public sealed class TasksController : ControllerBase
 {
     /// <summary>
@@ -33,13 +34,13 @@ public sealed class TasksController : ControllerBase
     /// <param name="cancellationToken">Токен отмены</param>
     /// <returns>Созданная задача</returns>
     [HttpPost]
+    [TypeFilter(typeof(ValidateCreateTaskRequestFilter))]
     [ValidateUserRequest]
     public async Task<ActionResult<TaskResponse>> CreateTaskAsync(
         [FromBody] CreateTaskRequest? request,
+        [FromQuery] Guid userId,
         CancellationToken cancellationToken)
     {
-        var userId = Guid.Parse("3826ff71-2480-40e4-b9e0-3ce74334116c");
-
         var task = await _taskUseCase.CreateTaskAsync(request!.Title ?? string.Empty, userId, cancellationToken);
         return StatusCode(201, task);
     }
@@ -83,6 +84,7 @@ public sealed class TasksController : ControllerBase
     /// <param name="cancellationToken">Токен отмены</param>
     /// <returns>204 при успехе или 400 при неверном запросе</returns>
     [HttpPut("{id}/title")]
+    [TypeFilter(typeof(ValidateSetTaskTitleRequestFilter))]
     [ValidateUserRequest]
     public async Task<IActionResult> SetTaskTitleAsync([FromRouteTaskId] Guid id, [FromBody] SetTaskTitleRequest? request,
         CancellationToken cancellationToken)
