@@ -62,8 +62,8 @@ public sealed class TasksController : ControllerBase
     /// <param name="id">Идентификатор задачи</param>
     /// <param name="cancellationToken">Токен отмены</param>
     /// <returns>Задача или 404, если задача не найдена</returns>
-    [HttpGet("{id:guid}")]
-    public async Task<ActionResult<TaskResponse>> GetTaskByIdAsync([FromRoute] Guid id, CancellationToken cancellationToken)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<TaskResponse>> GetTaskByIdAsync([FromRouteTaskId] Guid id, CancellationToken cancellationToken)
     {
         var taskResponse = await _taskUseCase.GetTaskByIdAsync(id, cancellationToken);
 
@@ -82,11 +82,9 @@ public sealed class TasksController : ControllerBase
     /// <param name="request">Данные для изменения названия</param>
     /// <param name="cancellationToken">Токен отмены</param>
     /// <returns>204 при успехе или 400 при неверном запросе</returns>
-    [HttpPut("{id:guid}/title")]
+    [HttpPut("{id}/title")]
     [ValidateUserRequest]
-    public async Task<IActionResult> SetTaskTitleAsync(
-        [FromRoute] Guid id,
-        [FromBody] SetTaskTitleRequest? request,
+    public async Task<IActionResult> SetTaskTitleAsync([FromRouteTaskId] Guid id, [FromBody] SetTaskTitleRequest? request,
         CancellationToken cancellationToken)
     {
         await _taskUseCase.SetTaskTitleAsync(id, request!.Title ?? string.Empty, cancellationToken);
@@ -99,8 +97,8 @@ public sealed class TasksController : ControllerBase
     /// <param name="id">Идентификатор задачи</param>
     /// <param name="cancellationToken">Токен отмены</param>
     /// <returns>204 при успехе или 404, если задача не найдена</returns>
-    [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> DeleteTaskByIdAsync([FromRoute] Guid id, CancellationToken cancellationToken)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteTaskByIdAsync([FromRouteTaskId] Guid id, CancellationToken cancellationToken)
     {
         var deleted = await _taskUseCase.DeleteTaskByIdAsync(id, cancellationToken);
         if (deleted == false)

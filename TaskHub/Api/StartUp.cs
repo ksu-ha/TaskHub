@@ -64,6 +64,12 @@ public sealed class Startup
                 Title = "TaskHub Api",
                 Version = "v1"
             });
+            options.MapType<Guid>(() => new OpenApiSchema
+            {
+                Type = "string",
+                Format = null,
+                Pattern = null
+            });
         });
 
         // Singleton
